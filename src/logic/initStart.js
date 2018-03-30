@@ -9,10 +9,10 @@ const initStart = () => {
     }
 
     return [cell1, cell2];
-}
+};
 
 const getRandomCoord = () => {
     return Math.floor(Math.random() * 3.9);
-}
+};
 
-export default initStart;
+export { initStart, getRandomCoord };

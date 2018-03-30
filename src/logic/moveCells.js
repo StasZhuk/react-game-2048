@@ -1,45 +1,44 @@
 import { cloneDeep } from 'lodash';
-const rotate = require('matrix-rotate');
+import matrixRotate from 'matrix-rotate';
+import { cellStates } from './cellManager';
 
 const directions = {
-    'UP': 'UP',
-    'DOWN': 'DOWN',
-    'RIGHT': 'RIGHT',
-    'LEFT': 'LEFT',
+    UP: 'UP',
+    DOWN: 'DOWN',
+    RIGHT: 'RIGHT',
+    LEFT: 'LEFT',
 };
 
 const moveCells = (initCells, direction) => {
     const cells = cloneDeep(initCells);
-    const matrix = Array.from(new Array(4), () => Array.from(new Array(4), () => 0) );
+    const matrix = Array.from(new Array(4), () =>
+        Array.from(new Array(4), () => 0),
+    );
 
     cells.forEach(cell => {
         matrix[cell.y][cell.x] = cell;
-    })
-
-    // console.log(printMatrix(matrix));
+    });
 
     rotateMatrixDirectionToMove(matrix, direction);
 
-    for (let y = 0; y < 3; y++) {
-        for (let x = 0; x <= 3; x++) {
+    for (let y = 0; y < 4; y++) {
+        for (let x = 0; x < 4; x++) {
             if (matrix[y][x] === 0) continue;
 
             moveCell(matrix, y, x);
         }
     }
 
-
     rotateMatrixDirectionToStart(matrix, direction);
 
-    for (let y = 0; y <= 3; y++) {
-        for (let x = 0; x <= 3; x++) {
+    for (let y = 0; y < 4; y++) {
+        for (let x = 0; x < 4; x++) {
             if (matrix[y][x] === 0) continue;
 
             matrix[y][x].y = y;
             matrix[y][x].x = x;
         }
     }
-
     // console.log(printMatrix(matrix));
     // console.log('\n\n*\n*****************************\n*');
 
@@ -47,87 +46,70 @@ const moveCells = (initCells, direction) => {
 };
 
 const moveCell = (matrix, y, x) => {
-    let nextRow = y + 1;
     let currentRow = y;
+    let nextRow = y - 1;
 
-    while (nextRow <= 3) {
+    while (nextRow >= 0) {
         if (matrix[nextRow][x] === 0) {
+            matrix[nextRow][x] = matrix[currentRow][x];
+            matrix[currentRow][x].state = cellStates.MOVING;
+            matrix[currentRow][x] = 0;
+
+            currentRow = nextRow;
+        } else if (matrix[nextRow][x].value === matrix[currentRow][x].value && (matrix[nextRow][x].state === cellStates.IDLE || matrix[nextRow][x].state === cellStates.MOVING)) {
+            matrix[nextRow][x].state = cellStates.DIEING;
+            matrix[currentRow][x].state = cellStates.INCRISE;
             matrix[nextRow][x] = matrix[currentRow][x];
             matrix[currentRow][x] = 0;
 
             currentRow = nextRow;
-        } 
+        } else {
+            break;
+        }
 
-        else if (matrix[nextRow][x].value !== 0 && matrix[nextRow][x].value === matrix[currentRow][x].value) {
-                matrix[nextRow][x].value *= 2;
-                matrix[currentRow][x] = 0;
-
-                currentRow = nextRow;
-            }
-
-        nextRow += 1; 
+        nextRow -= 1;
     }
-}
+};
 
-// function printMatrix(matrix) {
-//     let printString = '[\n';
-    
-//     Array
-//       .from(new Array(4), (x, i) => i)
-//       .forEach((colNum) => {
-//         printString += '  ';
-//         printString += Array
-//           .from(new Array(4), (x, i) => i)
-//           .map(rowNum =>
-//             JSON.stringify(matrix[colNum][rowNum]).toString().padStart(36, ' ')
-//           )
-//           .join(', ');
-//         printString += ',\n';
-//       });
-      
-//     printString += ']';
-//     console.log(printString);
-//   }
-
-  function rotateMatrixDirectionToMove(matrix, direction) {
-      switch(direction) {
-        case directions.RIGHT:
-            rotate(matrix);
-            break;
-
-        case directions.UP:
-            rotate(matrix);
-            rotate(matrix);
-            break;
-
+function rotateMatrixDirectionToMove(matrix, direction) {
+    switch (direction) {
         case directions.LEFT:
-            rotate(matrix);
-            rotate(matrix);
-            rotate(matrix);
+            matrixRotate(matrix);
+            break;
+
+        case directions.DOWN:
+            matrixRotate(matrix);
+            matrixRotate(matrix);
+            break;
+
+        case directions.RIGHT:
+            matrixRotate(matrix);
+            matrixRotate(matrix);
+            matrixRotate(matrix);
             break;
 
         default:
             break;
-      }
-  }
+    }
+}
 
-  function rotateMatrixDirectionToStart(matrix, direction) {
-    switch(direction) {
-        case directions.RIGHT:
-            rotate(matrix);
-            rotate(matrix);
-            rotate(matrix);
-            break;
-
-        case directions.UP:
-            rotate(matrix);
-            rotate(matrix);
-            break;
-
+function rotateMatrixDirectionToStart(matrix, direction) {
+    switch (direction) {
         case directions.LEFT:
-            rotate(matrix);
+            matrixRotate(matrix);
+            matrixRotate(matrix);
+            matrixRotate(matrix);
             break;
-            
+
+        case directions.DOWN:
+            matrixRotate(matrix);
+            matrixRotate(matrix);
+            break;
+
+        case directions.RIGHT:
+            matrixRotate(matrix);
+            break;
+
         default:
             break;
     }

@@ -1,0 +1,12 @@
+.button {
+    border: unset;
+    padding: 10px;
+    background-color: #e8dbcb;
+    min-width: 40px;
+    border-radius: 5px;
+
+    &.button-power {
+        padding: 10px 20px;
+    }
+}
+

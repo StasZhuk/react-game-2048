@@ -1452,6 +1452,10 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
+classname@^0.0.0:
+  version "0.0.0"
+  resolved "http://npm2.devpizzasoft.ru:4874/classname/-/classname-0.0.0.tgz#43d171b484e354c7a293a5b78004df6852db20d6"
+
 clean-css@4.1.x:
   version "4.1.11"
   resolved "http://npm2.devpizzasoft.ru:4874/clean-css/-/clean-css-4.1.11.tgz#2ecdf145aba38f54740f26cefd0ff3e03e125d6a"
@@ -4376,7 +4380,7 @@ loader-runner@^2.3.0:
   version "2.3.0"
   resolved "http://npm2.devpizzasoft.ru:4874/loader-runner/-/loader-runner-2.3.0.tgz#f482aea82d543e07921700d5a46ef26fdac6b8a2"
 
-loader-utils@^0.2.16:
+loader-utils@^0.2.11, loader-utils@^0.2.16:
   version "0.2.17"
   resolved "http://npm2.devpizzasoft.ru:4874/loader-utils/-/loader-utils-0.2.17.tgz#f86e6374d43205a6e6c60e9196f17c0299bfb348"
   dependencies:
@@ -5591,7 +5595,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.6.0:
+prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.6.0:
   version "15.6.1"
   resolved "http://npm2.devpizzasoft.ru:4874/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
   dependencies:
@@ -6328,6 +6332,10 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
   resolved "http://npm2.devpizzasoft.ru:4874/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
+simple-html-tokenizer@^0.1.1:
+  version "0.1.1"
+  resolved "http://npm2.devpizzasoft.ru:4874/simple-html-tokenizer/-/simple-html-tokenizer-0.1.1.tgz#05c2eec579ffffe145a030ac26cfea61b980fabe"
+
 slash@^1.0.0:
   version "1.0.0"
   resolved "http://npm2.devpizzasoft.ru:4874/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
@@ -6668,6 +6676,20 @@ supports-color@^5.3.0:
   resolved "http://npm2.devpizzasoft.ru:4874/supports-color/-/supports-color-5.3.0.tgz#5b24ac15db80fa927cf5227a4a33fd3c4c7676c0"
   dependencies:
     has-flag "^3.0.0"
+
+svg-inline-loader@^0.8.0:
+  version "0.8.0"
+  resolved "http://npm2.devpizzasoft.ru:4874/svg-inline-loader/-/svg-inline-loader-0.8.0.tgz#7e9d905d80d0b4e68d2df21afcd08ee9e9a3ea6e"
+  dependencies:
+    loader-utils "^0.2.11"
+    object-assign "^4.0.1"
+    simple-html-tokenizer "^0.1.1"
+
+svg-inline-react@^3.0.0:
+  version "3.0.0"
+  resolved "http://npm2.devpizzasoft.ru:4874/svg-inline-react/-/svg-inline-react-3.0.0.tgz#fe1501fcbfcefbacc672513211549d74550e8e91"
+  dependencies:
+    prop-types "^15.5.0"
 
 svgo@^0.7.0:
   version "0.7.2"

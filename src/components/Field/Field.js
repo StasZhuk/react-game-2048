@@ -46,9 +46,9 @@ export default class Field extends Component {
 }
 
 const increaseCell = keyframes`
-  0%, 40% { width: 23.1%; padding-top: 23.1% }
+  0%, 40% { width: 23%; padding-top: 23% }
   60% { width: 24%; padding-top: 24% }
-  90%, 100% { width: 23.1%; padding-top: 23.1% }
+  90%, 100% { width: 23%; padding-top: 23% }
 `;
 
 const dieingCell = keyframes`
@@ -110,7 +110,8 @@ const Cell = BackgroundCell.extend `
   justify-content: center;
   align-content: center;
   position: absolute;
-  padding-top: 21.5%;
+  padding-top: 21.4%;
+  width: 23%;
   line-height: 100px;
   transform: 
     translate(${({ x }) => {

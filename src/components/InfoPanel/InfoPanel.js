@@ -5,11 +5,11 @@ import { InfoCell } from '../ControlPanel';
 import _ from 'lodash';
 
 const superPower = [
-    { name: 'double', icon: 'spinner'}, 
-    { name: 'free', icon: 'spinner'}, 
-    { name: 'destroy', icon: 'spinner'}, 
+    // { name: 'double', icon: 'spinner'}, 
+    // { name: 'free', icon: 'spinner'}, 
     { name: 'change', icon: 'spinner'}, 
-    { name: 'half', icon: 'spinner'}
+    { name: 'half', icon: 'spinner'},
+    { name: 'destroy', icon: 'spinner'}, 
 ];
 
 export default class InfoPanel extends Component {

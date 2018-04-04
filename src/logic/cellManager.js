@@ -64,10 +64,22 @@ const newCellAdd = cells => {
     return [...cells, create(y, x, 2)];
 };
 
+const destroyCell = (cells, target) => {
+    const targetX = +target.getAttribute('x');
+    const targetY = +target.getAttribute('y');
+
+    cells = cells.filter(cell => {
+        return (cell.x !== targetX || cell.y !== targetY);
+    });
+
+    return cells;
+}
+
 export {
     create,
     cellStates,
     removeAndIncreaseCells,
     newCellAdd,
     calcScore,
+    destroyCell,
 };

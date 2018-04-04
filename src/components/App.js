@@ -11,6 +11,7 @@ import {
     removeAndIncreaseCells,
     newCellAdd,
     calcScore,
+    destroyCell,
 } from '../logic';
 import './App.css';
 
@@ -37,7 +38,8 @@ class App extends Component {
             power: true, //change false
             powerPanelActive: false,
             selectedPower: false,
-            selectedCells: 0,
+            numberOfSelectedCells: 0,
+            cellsSelected: [],
         };
     };
 
@@ -235,7 +237,7 @@ class App extends Component {
         this.state.powerPanelActive && (
             this.setState({
                 selectedPower: false,
-                selectedCells: 0
+                numberOfSelectedCells: 0
             })
         )
     }
@@ -247,7 +249,7 @@ class App extends Component {
         if (target.getAttribute('data-active') && powerName === this.state.selectedPower) {
             this.setState({
                 selectedPower: false,
-                selectedCells: 0
+                numberOfSelectedCells: 0
             });
         } else {
         // выбранная сила
@@ -258,27 +260,41 @@ class App extends Component {
     }   
 
     handleCellClick = (e) => {
+        const target = e.target;
+
         if (!this.state.selectedPower) {
             console.log('не выбрано')
             this.setState({
-                selectedCells: 0
+                numberOfSelectedCells: 0
             })
         }
 
         if (this.state.selectedPower) {
-            if (e.target.classList.contains('active')) {
-                e.target.classList.remove('active');
+            if (this.state.selectedPower === 'destroy') {
+                this.setState(state => ({
+                    ...state,
+                    cells: destroyCell(this.state.cells, target),
+                    selectedPower: false,
+                    powerPanelActive: false,
+                    power: false,
+                }));
+
+                return;
+            }
+
+            if (target.classList.contains('active')) {
+                target.classList.remove('active');
 
                 this.setState({
-                    selectedCells: this.state.selectedCells - 1
+                    numberOfSelectedCells: this.state.numberOfSelectedCells - 1
                 });
             } else {
-                if (this.state.selectedCells < 2){
+                if (this.state.numberOfSelectedCells < 2){
                     this.setState({
-                        selectedCells: this.state.selectedCells + 1
+                        numberOfSelectedCells: this.state.numberOfSelectedCells + 1
                     });
 
-                    e.target.classList.add('active');
+                    target.classList.add('active');
                 }
             }
         }

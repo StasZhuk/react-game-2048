@@ -39,8 +39,14 @@ const moveCells = (initCells, direction) => {
             matrix[y][x].x = x;
         }
     }
-    // console.log(printMatrix(matrix));
-    // console.log('\n\n*\n*****************************\n*');
+
+    cells
+        .filter(cell => 'by' in cell)
+        .forEach(cell => {
+            cell.x = cell.by.x;
+            cell.y = cell.by.y;
+            delete cell.by;
+        })
 
     return cells;
 };
@@ -56,8 +62,9 @@ const moveCell = (matrix, y, x) => {
             matrix[currentRow][x] = 0;
 
             currentRow = nextRow;
-        } else if (matrix[nextRow][x].value === matrix[currentRow][x].value && (matrix[nextRow][x].state === cellStates.IDLE || matrix[nextRow][x].state === cellStates.MOVING)) {
+        } else if (matrix[nextRow][x].value === matrix[currentRow][x].value && (matrix[nextRow][x].state === cellStates.IDLE || matrix[nextRow][x].state === cellStates.MOVING || matrix[nextRow][x].state === cellStates.NEW)) {
             matrix[nextRow][x].state = cellStates.DIEING;
+            matrix[nextRow][x].by = matrix[currentRow][x];
             matrix[currentRow][x].state = cellStates.INCRISE;
             matrix[nextRow][x] = matrix[currentRow][x];
             matrix[currentRow][x] = 0;

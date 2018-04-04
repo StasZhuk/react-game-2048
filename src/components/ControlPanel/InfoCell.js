@@ -36,7 +36,7 @@ class InfoCell extends Component {
 
 const Cell = styled.div`
     border: unset;
-    padding: 10px;
+    padding: 5px;
     background-color: #e8dbcb;
     min-width: 40px;
     border-radius: 5px;
@@ -59,7 +59,7 @@ const Cell = styled.div`
 const CellScore = styled.span`
     margin-top: 5px;
     font-size: ${({ value }) => {
-        return value > 99999 ? 22 : 26
+        return value > 99999 ? 18 : 20
     }}px;
 `
 

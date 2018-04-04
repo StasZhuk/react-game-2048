@@ -1,15 +1,32 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Button from '../Button';
+import 'font-awesome/css/font-awesome.min.css';
 
 class ControlPanel extends Component {
     render() {
+        const { handleNewGame, handleClickPanelPowerButton, power } = this.props;
+
         return (
             <MainNavigation className="control-panel">
                 <ButtonWrap>
-                    <Button onClick={this.props.handleNewGame} restart={true} small className="button-restart" />
-                    <Button className="button-power" power value="power" />
-                    <Button className="button-menu" menu small />
+                    <Button 
+                        onClick={handleNewGame}
+                        small
+                        className="button-restart"
+                        icon="retweet" 
+                    />
+                    <Button 
+                        className="button-power" 
+                        power={power} 
+                        value="Power" 
+                        onClick={handleClickPanelPowerButton} 
+                    />
+                    <Button 
+                        className="button-menu" 
+                        small 
+                        icon="bars" 
+                    />
                 </ButtonWrap>
             </MainNavigation>
         )

@@ -6,6 +6,7 @@ const cellStates = {
     DIEING: 'DIEING',
     MOVING: 'MOVING',
     INCRISE: 'INCRISE',
+    NEW: 'NEW',
 };
 
 const create = (y, x, value, id) => ({
@@ -13,7 +14,7 @@ const create = (y, x, value, id) => ({
     x,
     value,
     id: id || uniqueId(),
-    state: cellStates.IDLE,
+    state: cellStates.NEW,
 });
 
 const removeAndIncreaseCells = cells => {
@@ -46,7 +47,6 @@ const newCellAdd = cells => {
     });
 
     if (filledCells.size === 16) return;
-
 
     let x,
         y,

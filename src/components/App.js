@@ -4,6 +4,8 @@ import Layout from './Layout';
 import Field from './Field';
 import { ControlPanel } from './ControlPanel';
 import InfoPanel from './InfoPanel';
+import MenuModal from './MenuModal';
+import AnimationBlock from './AnimationBlock';
 import { initStart } from '../logic';
 import {
     moveCells,
@@ -12,6 +14,9 @@ import {
     newCellAdd,
     calcScore,
     destroyCell,
+    getTransformCoords,
+    changeCells,
+    changeCellValue,
 } from '../logic';
 import './App.css';
 
@@ -19,7 +24,20 @@ class App extends Component {
     constructor(props) {
         super(props);
 
-        this.state = this.getNewState();
+        this.state = {
+            cells: initStart(),
+            score: 0,
+            best: 0,
+            scoreToPower: 0,
+            power: true, //change false
+            powerPanelActive: false,
+            mainMenuActive: false,
+            selectedPower: false,
+            numberOfSelectedCells: 0,
+            cellsSelected: [],
+            animationIsActive: false,
+            storage: JSON.parse(window.localStorage.getItem('gameState')) || null
+        };;
     }
 
     keyCodeDirections = {
@@ -33,13 +51,14 @@ class App extends Component {
         return {
             cells: initStart(),
             score: 0,
-            best: 0,
             scoreToPower: 0,
             power: true, //change false
             powerPanelActive: false,
+            mainMenuActive: false,
             selectedPower: false,
             numberOfSelectedCells: 0,
             cellsSelected: [],
+            animationIsActive: false,
         };
     };
 
@@ -47,7 +66,9 @@ class App extends Component {
     componentDidMount() {
         document.addEventListener('keyup', this.handleKeyPress);
 
-        var el = document.getElementById('root')
+        console.log(this.state.storage);
+
+        var el = document.getElementById('root');
 
         this.swipedetect(el, function(swipedir, app){
             
@@ -66,6 +87,7 @@ class App extends Component {
                 app.setState(state => ({
                     ...state,
                     score: state.score += calcScore(state.cells),
+                    best: state.best < state.score ? state.score : state.best,
                     scoreToPower: state.scoreToPower += calcScore(state.cells),
                 }));
 
@@ -77,21 +99,46 @@ class App extends Component {
                     }));
 
                     setTimeout(() => {
-                        // add new cell if field changed
-                        app.setState(state => ({
-                            ...state,
-                            cells: newCellAdd(state.cells),
-                        }));
+                        // add new cell if field changed and power FREE is not active
+                        if (app.state.selectedPower !== 'free') {
+                            app.setState(state => ({
+                                ...state,
+                                cells: newCellAdd(state.cells),
+                            }));
+                        }
 
+                        // проверяем есть ли еще ходы 
+                        if (!this.checkIfHasMoves(this.state.cells) && this.state.cells.length === 16) {
+                            if (this.state.power) {
+
+                            } else {
+                                console.log('the end');
+                                window.localStorage.removeItem('gameState', null);
+                                return;
+                            }
+                        }
+
+
+                        if (app.state.selectedPower === 'free') {
+                            app.setState({
+                                scoreToPower: 0,
+                                power: false, 
+                                powerPanelActive: false,
+                                selectedPower: false,
+                            })
+                        }
                         // check power activity
 
-                        if (app.state.scoreToPower >= 0 && !app.state.power) {
+                        if (app.state.scoreToPower >= 2 && !app.state.power) { //change score to power
                             app.setState(state => ({
                                 ...state,
                                 power: true,
                                 scoreToPower: 0,
                             })); 
                         }
+
+                        this.storage = JSON.parse(this.state)
+                        window.localStorage.setItem(this.storage);
                     }, 150);
                 }, 50);
         
@@ -121,41 +168,46 @@ class App extends Component {
                 app = this;                
     
         touchsurface.addEventListener('touchstart', function(e){
-            var touchobj = e.changedTouches[0]
-            swipedir = 'none'
-            startX = touchobj.pageX
-            startY = touchobj.pageY
-            startTime = new Date().getTime() // record time when finger first makes contact with surface
+            var touchobj = e.changedTouches[0];
+            swipedir = 'none';
+            startX = touchobj.pageX;
+            startY = touchobj.pageY;
+            startTime = new Date().getTime(); // record time when finger first makes contact with surface
             e.preventDefault();
-        }, false)
+        }, false);
     
         touchsurface.addEventListener('touchmove', function(e){
-            e.preventDefault() // prevent scrolling when inside DIV
-        }, false)
+            e.preventDefault(); // prevent scrolling when inside DIV
+        }, false);
     
         touchsurface.addEventListener('touchend', function(e){
-            if (e.target.tagName === 'BUTTON' || e.target.hasAttribute('data-cell')) {
+            if (e.target.tagName === 'BUTTON' || (e.target.hasAttribute('data-cell') && app.state.selectedPower)) {
                 e.target.click();
 
                 return;   
             } 
+
+            if (app.state.selectedPower && app.state.selectedPower !== 'free') {
+                return;
+            }
             
-            var touchobj = e.changedTouches[0]
-            distX = touchobj.pageX - startX // get horizontal dist traveled by finger while in contact with surface
-            distY = touchobj.pageY - startY // get vertical dist traveled by finger while in contact with surface
-            elapsedTime = new Date().getTime() - startTime // get time elapsed
-            if (elapsedTime <= allowedTime){ // first condition for awipe met
-                if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint){ // 2nd condition for horizontal swipe met
-                    swipedir = (distX < 0)? 'ArrowLeft' : 'ArrowRight'
+            var touchobj = e.changedTouches[0];
+            distX = touchobj.pageX - startX; // get horizontal dist traveled by finger while in contact with surface
+            distY = touchobj.pageY - startY; // get vertical dist traveled by finger while in contact with surface
+            elapsedTime = new Date().getTime() - startTime; // get time elapsed
+
+            if (elapsedTime <= allowedTime) { // first condition for awipe met
+                if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint) { // 2nd condition for horizontal swipe met
+                    swipedir = (distX < 0)? 'ArrowLeft' : 'ArrowRight';
                 }
-                else if (Math.abs(distY) >= threshold  && Math.abs(distX) <= restraint){ // 2nd condition for vertical swipe met
-                    swipedir = (distY < 0)? 'ArrowUp' : 'ArrowDown'
+                else if (Math.abs(distY) >= threshold  && Math.abs(distX) <= restraint) { // 2nd condition for vertical swipe met
+                    swipedir = (distY < 0)? 'ArrowUp' : 'ArrowDown';
                 }
             }
             // check that elapsed time is within specified, horizontal dist traveled >= threshold, and vertical dist traveled <= 100
             handleswipe(swipedir, app);
-            e.preventDefault()
-        }, false)
+            e.preventDefault();
+        }, false);
     }
 
     stateIsChanged = startState => {
@@ -175,7 +227,7 @@ class App extends Component {
 
     // функция нажатие на кнопку
     handleKeyPress = async e => {
-        if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(e.code) && !this.state.selectedPower) {
+        if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(e.code) && (!this.state.selectedPower || this.state.selectedPower === 'free')) {
             let startState = this.state.cells;
 
             // move cells
@@ -190,7 +242,8 @@ class App extends Component {
             this.setState(state => ({
                 ...state,
                 score: this.state.score + calcScore(this.state.cells),
-                scoreToPower: this.state.scoreToPower + calcScore(this.state.cells),
+                best: state.best <= this.state.score + calcScore(this.state.cells) ? state.score + calcScore(this.state.cells)  : state.best,
+                scoreToPower: state.power ? this.state.scoreToPower : this.state.scoreToPower + calcScore(this.state.cells),
             }));
 
             await delay(150);
@@ -204,26 +257,55 @@ class App extends Component {
             await delay(50);
 
             // add new cell if field changed
-            this.setState(state => ({
-                ...state,
-                cells: newCellAdd(this.state.cells),
-            }));
+            if (this.state.selectedPower !== 'free') {
+                this.setState(state => ({
+                    ...state,
+                    cells: newCellAdd(this.state.cells),
+                }));
+            }
+
+            if (!this.checkIfHasMoves(this.state.cells) && this.state.cells.length === 16) {
+                console.log('the end');
+                return;
+            }
+
+            if (this.state.selectedPower === 'free') {
+                this.setState({
+                    scoreToPower: 0,
+                    power: false, 
+                    powerPanelActive: false,
+                    selectedPower: false,
+                })
+            }
 
             // check power activity
-            if (this.state.scoreToPower >= 0 && !this.state.power) {
+            if (this.state.scoreToPower >= 20 && !this.state.power) { //change score
                 this.setState(state => ({
                     ...state,
                     power: true,
                     scoreToPower: 0,
                 })); 
-
             }
+ 
+            // сохраняем состояние в localStorage
+            window.localStorage.setItem('gameState', JSON.stringify(this.state));
         }
     };
 
     // новая игра
     newGame = () => {
         this.setState(this.getNewState());
+    };
+
+    // продолжить последнюю игру
+    continueGame = () => {
+        this.setState(this.state.storage);
+    };
+
+    handleMenuTrigger = () => {
+        this.setState({
+            mainMenuActive: !this.state.mainMenuActive
+        })
     };
 
     clickPower = () => {
@@ -237,7 +319,8 @@ class App extends Component {
         this.state.powerPanelActive && (
             this.setState({
                 selectedPower: false,
-                numberOfSelectedCells: 0
+                numberOfSelectedCells: 0,
+                cellsSelected: [],
             })
         )
     }
@@ -249,34 +332,115 @@ class App extends Component {
         if (target.getAttribute('data-active') && powerName === this.state.selectedPower) {
             this.setState({
                 selectedPower: false,
-                numberOfSelectedCells: 0
+                numberOfSelectedCells: 0,
+                cellsSelected: [],
             });
         } else {
         // выбранная сила
             this.setState({
-                selectedPower: powerName
+                selectedPower: false,
             });
-        }
-    }   
 
-    handleCellClick = (e) => {
+            setTimeout(() => {
+                this.setState({
+                    selectedPower: powerName,
+                    numberOfSelectedCells: 0,
+                    cellsSelected: [],
+                });
+            }, 10);
+            
+        }
+    }
+    
+    checkIfHasMoves = (cells) => {
+        let newCellsState;
+
+        newCellsState = moveCells(cells,  directions.DOWN);
+        if (this.stateIsChanged(newCellsState)) return true;
+
+        newCellsState = moveCells(cells,  directions.UP);
+        if (this.stateIsChanged(newCellsState)) return true;
+
+        newCellsState = moveCells(cells,  directions.LEFT);
+        if (this.stateIsChanged(newCellsState)) return true;
+
+        newCellsState = moveCells(cells,  directions.RIGHT);
+        if (this.stateIsChanged(newCellsState)) return true;
+
+        return false;
+    }
+
+    handleCellClick = async (e) => {
         const target = e.target;
 
         if (!this.state.selectedPower) {
-            console.log('не выбрано')
             this.setState({
-                numberOfSelectedCells: 0
+                numberOfSelectedCells: 0,
+                cellsSelected: [],
             })
         }
 
         if (this.state.selectedPower) {
+            this.setState({
+                cellsSelected: this.state.cellsSelected.concat(target)
+            });
+
+            await delay(100);
+
             if (this.state.selectedPower === 'destroy') {
+                target.classList.add('destroy');
+
+                await delay(100);
+
                 this.setState(state => ({
                     ...state,
                     cells: destroyCell(this.state.cells, target),
                     selectedPower: false,
                     powerPanelActive: false,
                     power: false,
+                    score: this.state.score - 2, //change on 10000
+                }));
+
+                return;
+            }
+
+            // меняем местами ячейки
+            if (this.state.selectedPower === 'change' && this.state.cellsSelected.length === 2) {
+                this.setState(state => ({
+                    ...state,
+                    cells: changeCells(this.state.cells, this.state.cellsSelected),
+                    selectedPower: false,
+                    powerPanelActive: false,
+                    power: false,
+                    cellsSelected: [],
+                }));
+
+                return;
+            }
+
+            // уменьшаем значение ячейки в 2 раза
+            if (this.state.selectedPower === 'half') {
+                this.setState(state => ({
+                    ...state,
+                    cells: changeCellValue(this.state.cells, target, 'half'),
+                    selectedPower: false,
+                    powerPanelActive: false,
+                    power: false,
+                    cellsSelected: [],
+                }));
+
+                return;
+            }
+
+            // увеличиваем значение ячейки в 2 раза
+            if (this.state.selectedPower === 'double') {
+                this.setState(state => ({
+                    ...state,
+                    cells: changeCellValue(this.state.cells, target, 'double'),
+                    selectedPower: false,
+                    powerPanelActive: false,
+                    power: false,
+                    cellsSelected: [],
                 }));
 
                 return;
@@ -286,7 +450,8 @@ class App extends Component {
                 target.classList.remove('active');
 
                 this.setState({
-                    numberOfSelectedCells: this.state.numberOfSelectedCells - 1
+                    numberOfSelectedCells: this.state.numberOfSelectedCells - 1,
+                    cellsSelected: []
                 });
             } else {
                 if (this.state.numberOfSelectedCells < 2){
@@ -301,13 +466,24 @@ class App extends Component {
     }
 
     render() {
-        const { cells, score, best, power, powerPanelActive, selectedPower } = this.state;
+        const { 
+            cells,
+            score, 
+            best, 
+            power, 
+            powerPanelActive, 
+            selectedPower, 
+            mainMenuActive, 
+            animationIsActive,
+        } = this.state;
 
         return (
             <div className="container">
                 <Layout>
+                    <AnimationBlock animationGo={animationIsActive} />
+                    <MenuModal active={mainMenuActive} className={mainMenuActive ? 'active' : ''} handleNewGame={this.newGame} handleBack={this.handleMenuTrigger} continueGame={this.continueGame}   />
                     <InfoPanel 
-                        selectedPower={this.state.selectedPower} 
+                        selectedPower={selectedPower} 
                         gameScore={score} 
                         bestScore={best} 
                         powerPanelActive={powerPanelActive}
@@ -316,7 +492,8 @@ class App extends Component {
                     <ControlPanel 
                         power={power} 
                         handleNewGame={this.newGame} 
-                        handleClickPanelPowerButton={this.clickPower}  
+                        handleClickPanelPowerButton={this.clickPower}
+                        handleClickMenuButton={this.handleMenuTrigger}  
                     />
                     <Field 
                         handleCellClick={this.handleCellClick}

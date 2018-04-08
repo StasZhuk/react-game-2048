@@ -23,6 +23,7 @@ export default class Field extends Component {
                     <Cell
                         data-active={false} 
                         key={ id }
+                        id={ id }
                         x={ x }
                         y={ y }
                         value={ value }
@@ -105,7 +106,19 @@ const BackgroundCell = styled.div `
   color: #613942;
 `;
 
-const Cell = BackgroundCell.extend `
+const Cell = BackgroundCell.extend.attrs({
+  style: (props) => {
+    let x,y;
+    if (window.innerWidth <= 400) {
+      x = ((window.innerWidth - 20) * (0.08 / 3) + (window.innerWidth - 64) * 0.23) * props.x;
+      y = ((window.innerWidth - 20) * (0.08 / 3) + (window.innerWidth - 64) * 0.23) * props.y;
+    } else {
+        x = 97.54 * props.x;
+        y = 97.54 * props.y;
+    }
+    return {'transform':'translate('+ x + 'px,' + y + 'px)'}
+  }
+})`
   display: flex;
   justify-content: center;
   align-content: center;
@@ -113,13 +126,7 @@ const Cell = BackgroundCell.extend `
   padding-top: 21.4%;
   width: 23%;
   line-height: 100px;
-  transform: 
-    translate(${({ x }) => {
-      return  window.innerWidth <= 400 ? ((window.innerWidth - 20) * (0.08 / 3) + (window.innerWidth - 64) * 0.23) * x : 97.54 * x}
-    }px,
-    ${({ y }) => {
-      return  window.innerWidth <= 400 ? ((window.innerWidth - 20) * (0.08 / 3) + (window.innerWidth - 64) * 0.23) * y : 97.54 * y}
-    }px);
+  opacity: 1;
   animation: ${({ state }) => {
     if (state === 'INCRISE') return `${increaseCell} 0.1s ease-in-out forwards running`; 
     if (state === 'DIEING') return `${dieingCell} 0.1s ease-in forwards running`; 
@@ -129,10 +136,11 @@ const Cell = BackgroundCell.extend `
   }};
   text-align: center;
   transform-origin: center;
-  transition: transform 0.1s ease-in-out, opacity 0.1s ease-in-out, border-color 0.3s ease-in-out;
+  transition: transform 0.1s ease-in-out, opacity 0.2s ease-in-out, border-color 0.3s ease-in-out;
   font-weight: 600;
   background-color: ${({ value }) => backgroundColorCalc(value)};
-  border: ${({ powerIsActive }) => powerIsActive ? '3px solid #1e9eb4' : '3px solid transparent'};
+  border: ${({ powerIsActive }) => powerIsActive && powerIsActive !== 'free' ? '3px solid #1e9eb4' : '3px solid transparent'};
+  cursor: ${({ powerIsActive }) => powerIsActive && powerIsActive !== 'free' ? 'pointer' : 'initial'};
   z-index: ${({ state }) => {
     let idx = 5;
 
@@ -180,6 +188,17 @@ const Cell = BackgroundCell.extend `
 
   &.active {
     border-color: red;
+  }
+
+  &.destroy {
+    opacity: 0;
+    transform: 
+      translate(${({ x }) => {
+        return  window.innerWidth <= 400 ? ((window.innerWidth - 20) * (0.08 / 3) + (window.innerWidth - 64) * 0.23) * x : 97.54 * x}
+      }px,
+      ${({ y }) => {
+        return  window.innerWidth <= 400 ? ((window.innerWidth - 20) * (0.08 / 3) + (window.innerWidth - 64) * 0.23) * y : 97.54 * y}
+      }px) rotate(450deg) scale(1.5);
   }
 `;
 

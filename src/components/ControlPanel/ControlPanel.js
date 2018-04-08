@@ -5,7 +5,7 @@ import 'font-awesome/css/font-awesome.min.css';
 
 class ControlPanel extends Component {
     render() {
-        const { handleNewGame, handleClickPanelPowerButton, power } = this.props;
+        const { handleNewGame, handleClickPanelPowerButton, power, handleClickMenuButton } = this.props;
 
         return (
             <MainNavigation className="control-panel">
@@ -26,6 +26,7 @@ class ControlPanel extends Component {
                         className="button-menu" 
                         small 
                         icon="bars" 
+                        onClick={handleClickMenuButton}
                     />
                 </ButtonWrap>
             </MainNavigation>

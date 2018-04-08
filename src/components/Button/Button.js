@@ -32,21 +32,22 @@ export default class Button extends Component {
 }
 
 const MainButton = styled.button`
-    border: unset;
-    padding: 10px;
-    background-color: ${({ dataActive }) => dataActive ? 'red' : '#e8dbcb' };
-    min-width: 40px;
-    border-radius: 5px;
-    max-width: 100px;
-    width: 100%;
-    font-size: 18px;
-    color: ${({ dataActive }) => dataActive ? '#fff' : '#613942' } ;
-    font-weight: bold;
-    transition: 0.5s background-color, 1s border, 1s color;
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    min-width: 40px;
+    max-width: 100px;
+    width: 100%;
+    padding: 10px;
+    border: unset;
+    border-radius: 5px;
+    background-color: ${({ dataActive }) => dataActive ? 'red' : '#e8dbcb' };
+    font-size: 18px;
+    color: ${({ dataActive }) => dataActive ? '#fff' : '#613942' } ;
+    font-weight: bold;
+    transition: 0.5s background-color, 1s border, 1s color;
     cursor: pointer;
 
     ${props => props.power && css`
@@ -61,8 +62,12 @@ const MainButton = styled.button`
         }};
     `}
 
-    ${props => props.restart && css`
-
+    ${props => props.menu && css`
+        margin: 0 auto;
+        margin-bottom: 30px;
+        max-width: 200px;
+        flex-direction: row;
+        border: 3px solid #613942;
     `}
 
     ${props => props.small && css`

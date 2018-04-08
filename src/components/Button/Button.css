@@ -6,3 +6,6 @@
     border-radius: 5px;
 }
  */
+button .fa {
+    order: 2;
+}

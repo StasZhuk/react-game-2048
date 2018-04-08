@@ -68,7 +68,7 @@ class App extends Component {
 
         console.log(this.state.storage);
 
-        var el = document.getElementById('root');
+        var el = document.getElementById('root')
 
         this.swipedetect(el, function(swipedir, app){
             
@@ -108,8 +108,8 @@ class App extends Component {
                         }
 
                         // проверяем есть ли еще ходы 
-                        if (!this.checkIfHasMoves(this.state.cells) && this.state.cells.length === 16) {
-                            if (this.state.power) {
+                        if (!app.checkIfHasMoves(app.state.cells) && app.state.cells.length === 16) {
+                            if (app.state.power) {
 
                             } else {
                                 console.log('the end');
@@ -137,8 +137,7 @@ class App extends Component {
                             })); 
                         }
 
-                        this.storage = JSON.parse(this.state)
-                        window.localStorage.setItem(this.storage);
+                        window.localStorage.setItem('gameState', JSON.stringify(app.state));
                     }, 150);
                 }, 50);
         
@@ -287,7 +286,6 @@ class App extends Component {
                 })); 
             }
  
-            // сохраняем состояние в localStorage
             window.localStorage.setItem('gameState', JSON.stringify(this.state));
         }
     };

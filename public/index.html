@@ -25,6 +25,111 @@
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
+    <style>
+        html {
+          box-sizing: border-box;
+        }
+        body {
+          margin: 0;
+        }
+        * {
+          box-sizing: inherit;
+        }
+        .preloader__container {
+          display: flex;
+          position: fixed;
+          z-index: 9999;
+          width: 100vw;
+          height: 100vh;
+          background-color: #839973;
+          opacity: 0;
+          transition: opacity 1s;
+          pointer-events: none;
+        }
+
+        .preloader__container.active {
+          opacity: 1;
+        }
+
+        .preloader {
+          position: relative;
+          width: 40px;
+          height: 40px;
+          background-color: #ff4747;
+          margin: auto;
+          border: 5px solid #743504;
+          box-shadow: 0px 1px 1px 1px #000;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+        .preloader__container.active .preloader {
+          animation: rotate 2s ease-in-out infinite running;
+        }
+        .preloader__container.active  .preloader:after {
+          animation: bounce 2s linear infinite running;
+        }
+        .preloader__wrap {
+          position: relative;
+          display: flex;
+          max-width: 50px;
+          max-height: 50px;
+          margin: auto;
+        }
+        .preloader__title {
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          margin-top: 20px;
+          font-weight: bold;
+          color: #743504;
+          font-size: 20px;
+        }
+        .preloader:after {
+          content: '';
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          right: 10px;
+          bottom: 10px;
+          background-color: #fff;
+          transform: translate(50%, 50%);
+          border-radius: 50%;
+          border: 1px solid #000;
+        }
+      @keyframes rotate {
+            0% {
+                transform: rotate(0);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+      @keyframes bounce {
+        0%, 25%, 100%, 95% {
+          transform: translate(85%, 85%);
+        }
+        55% {
+          transform: translate(-65%, -80%);
+        }
+        75% {
+          transform: translate(80%, 0%);
+        }
+      }
+    </style>
+    <div class="preloader__container active">
+        <div class="preloader__wrap">
+            <div class="preloader"></div>
+            <span class="preloader__title">Загрузка</span>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+          setTimeout(() => {
+             document.querySelector('.preloader__container').classList.remove('active');
+          }, 2000);
+        });
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.

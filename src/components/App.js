@@ -29,14 +29,13 @@ class App extends Component {
             score: 0,
             best: window.localStorage.getItem('gameState') ? JSON.parse(window.localStorage.getItem('gameState')).best : 0,
             scoreToPower: 0,
-            power: false,
+            power: true,
             powerPanelActive: false,
             mainMenuActive: window.localStorage.getItem('gameState') && true,
             selectedPower: false,
             numberOfSelectedCells: 0,
             cellsSelected: [],
             animationIsActive: false,
-            storage: JSON.parse(window.localStorage.getItem('gameState')) || null,
             gameIsOver: false,
             beginingOfGame: true,
             score2048: false,
@@ -56,7 +55,7 @@ class App extends Component {
             best: window.localStorage.getItem('gameState') ? JSON.parse(window.localStorage.getItem('gameState')).best : 0,
             score: 0,
             scoreToPower: 0,
-            power: false,
+            power: true,
             powerPanelActive: false,
             mainMenuActive: false,
             selectedPower: false,
@@ -69,7 +68,7 @@ class App extends Component {
         };
     };
 
-    needScoreToPower = 5;
+    needScoreToPower = 50;
     // переменные для тач событий
     swipedir = 'none';
     startX = null;
@@ -81,6 +80,8 @@ class App extends Component {
     allowedTime = 500;
     elapsedTime = 0;
     startTime = 0;
+    storage = JSON.parse(window.localStorage.getItem('gameState')) || null;
+
 
     componentDidMount() { 
         document.addEventListener('keyup', this.handleKeyPress);
@@ -252,9 +253,7 @@ class App extends Component {
 
         await delay(200);
 
-        this.setState({
-            storage: null
-        });
+        this.storage = null;
     };
 
     // продолжить последнюю игру
@@ -265,9 +264,7 @@ class App extends Component {
 
         await delay(500);
 
-        this.setState({
-            storage: null
-        });
+        this.storage = null;
     };
 
     handleMenuTrigger = () => {
@@ -297,7 +294,7 @@ class App extends Component {
     }
 
     getStateFromStorage = () => {
-        const state = this.state.storage;
+        const state = this.storage;
 
         return {
             cells: state.cells,
@@ -312,7 +309,6 @@ class App extends Component {
             cellsSelected: [],
             animationIsActive: true,
             gameIsOver: false,
-            storage: this.state.storage,
             score2048: state.score2048,
         }
     }
@@ -403,11 +399,13 @@ class App extends Component {
 
                 this.setState(state => ({
                     ...state,
-                    cells: destroyCell(this.state.cells, target),
+                    cells: destroyCell(state.cells, target),
                     selectedPower: false,
                     powerPanelActive: false,
                     power: false,
-                    score: this.state.score - this.needScoreToPower,
+                    score: state.score - this.needScoreToPower,
+                    numberOfSelectedCells: 0,
+                    cellsSelected: [],
                 }));
 
                 return;
@@ -488,7 +486,6 @@ class App extends Component {
             mainMenuActive, 
             animationIsActive,
             gameIsOver,
-            storage,
             beginingOfGame,
         } = this.state;
 
@@ -504,7 +501,7 @@ class App extends Component {
                         handleBack={this.handleMenuTrigger} 
                         continueGame={this.continueGame} 
                         gameIsOver={gameIsOver}
-                        storage={storage}
+                        storage={this.storage}
                     />
                     <InfoPanel 
                         selectedPower={selectedPower} 

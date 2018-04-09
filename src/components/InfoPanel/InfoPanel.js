@@ -6,10 +6,10 @@ import _ from 'lodash';
 
 const superPower = [
     { name: 'double', icon: 'spinner'}, 
-    // { name: 'half', icon: 'spinner'}, 
+    { name: 'half', icon: 'spinner'}, 
     { name: 'change', icon: 'spinner'}, 
     { name: 'free', icon: 'spinner'},
-    // { name: 'destroy', icon: 'spinner'}, 
+    { name: 'destroy', icon: 'spinner'}, 
 ];
 
 export default class InfoPanel extends Component {
@@ -32,7 +32,6 @@ export default class InfoPanel extends Component {
             item = powers[0];
             powers.shift();
             initPower[i] = item;
-
         }
 
         return initPower;
@@ -62,7 +61,7 @@ export default class InfoPanel extends Component {
                     }
                 </ButtonWrap>
                 <InfoWrap className="info-wrap" powerPanelActive={powerPanelActive}>
-                    <InfoCell className="cell-logo" info={true} title="LOGO" />
+                    <InfoCell className="cell-logo" info={true} title="v0.0.1" />
                     <InfoCell className="cell-best" info={true} data={bestScore}  title="Best" />
                     <InfoCell className="cell-score" info={true} data={gameScore} title="Score" />
                 </InfoWrap>

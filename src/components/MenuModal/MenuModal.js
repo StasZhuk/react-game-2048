@@ -1,21 +1,25 @@
 import React, { Component } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Button from '../Button';
 import 'font-awesome/css/font-awesome.min.css';
 
 export default class MenuModal extends Component {
     render() {
-        const { handleNewGame, className, handleBack, continueGame } = this.props;
+        const { handleNewGame, className, handleBack, continueGame, gameIsOver, storage, beginingOfGame } = this.props;
 
         return (
             <MainMenuWrap className={className}>
                 <MainMenu>
                     <MenuHeading>
-                        Menu
+                        {gameIsOver ? 'Game Over' : 'Menu'}
                     </MenuHeading>
                     <Button value="New Game" menu onClick={handleNewGame} />
-                    <Button value="Continue" menu onClick={continueGame}/>
-                    <Button value="Back" icon="caret-left" menu onClick={handleBack} />
+                    {
+                        !gameIsOver && storage && <Button value="Continue" menu onClick={continueGame}/>
+                    }
+                    {
+                        !gameIsOver && !beginingOfGame && <Button value="Back" menu onClick={handleBack} />
+                    }
                 </MainMenu>
             </MainMenuWrap>
         );
@@ -42,7 +46,8 @@ const MainMenuWrap = styled.div`
     bottom: 0;
     background-color: #839973;
     transform: translateY(-100%);
-    transition: transform 0.3s ease-in;
+    transition-property: transform;
+    transition-delay: 0.5s;
     
     &.active {
         transform: translate(0, 0);

@@ -31,6 +31,10 @@ const removeAndIncreaseCells = cells => {
     });
 };
 
+const checkValueCell2048 = cells => {
+    return cells.filter(cell => cell.value === 2048);
+}
+
 const calcScore = cells => {
     let score = 0;
 
@@ -132,4 +136,5 @@ export {
     destroyCell,
     changeCells,
     changeCellValue,
+    checkValueCell2048,
 };

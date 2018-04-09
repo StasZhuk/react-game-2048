@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 // import InlineSVG from 'svg-inline-react';
 import '../../styles/css/Button.css';
 // import logo from './restart.svg';
@@ -31,6 +31,11 @@ export default class Button extends Component {
     }
 }
 
+const warning = keyframes`
+    0%, 100% { border-color: #ff4747 }
+    50% { border-color: #fff }
+`
+
 const MainButton = styled.button`
     position: relative;
     display: flex;
@@ -43,12 +48,16 @@ const MainButton = styled.button`
     padding: 10px;
     border: unset;
     border-radius: 5px;
-    background-color: ${({ dataActive }) => dataActive ? 'red' : '#e8dbcb' };
+    background-color: ${({ dataActive }) => dataActive ? '#ff4747' : '#e8dbcb' };
     font-size: 18px;
     color: ${({ dataActive }) => dataActive ? '#fff' : '#613942' } ;
     font-weight: bold;
-    transition: 0.5s background-color, 1s border, 1s color;
+    transition: 0.5s background-color, 0.5s border, 0.5s color;
     cursor: pointer;
+
+    &.warning {
+        animation: ${warning} 1s ease-in-out running infinite; 
+    }
 
     ${props => props.power && css`
         background-color: ${({ power }) => {

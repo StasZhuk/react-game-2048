@@ -187,7 +187,7 @@ const Cell = BackgroundCell.extend.attrs({
   }}px;
 
   &.active {
-    border-color: red;
+    border-color: #ff4747;
   }
 
   &.destroy {
